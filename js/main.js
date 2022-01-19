@@ -5,43 +5,22 @@ window.onload = () => {
     navigator.serviceWorker
       .register('./sw.js');
   }
+  console.log("main!");
+  
+  if (!window.Worker) {
+    return;
+  }
 
-  /**
-   * POC
-   */
-   let timeoutId = -1;
-   const log = msg => {
-     const msgContainer = document.createElement("div");
-     msgContainer.innerText = msg;
-     document.getElementById("log").appendChild(
-       msgContainer
-     );
-   }
-   let i = 0;
-   let start = new Date().getTime();
-   const tick = () => {
-     const elapsed = Math.floor((new Date().getTime() - start) / 1000);
-     log(`logging message ${i++} at ${elapsed} seconds elapsed`);
-     
+  let count = 0;
 
-     timeoutId = setTimeout(tick, 1000);
-   }
+  console.log("registerd workers");
+  const log = msg => document.getElementById("log").innerHTML += `${msg}<br />`;
+  const worker = new Worker("./worker.js");
+  worker.onmessage = msg => log(`Recieved message: ${msg.data}, count: ${count++}`);
 
-   document.getElementById("go").addEventListener("click", () => {
-     if (timeoutId < 0) {
-       tick();
-     }
-   });
+  document.getElementById("go").addEventListener("click", () => worker.postMessage("go"));
+  document.getElementById("stop").addEventListener("click", () => worker.postMessage("stop"));
 
-   document.getElementById("stop").addEventListener("click", () => {
-     clearTimeout(timeoutId);
-     timeoutId = -1;
-     console.log("stopped");
-   })
-
-   window.onfocus = () => {
-     log("gained focus")
-   }
-
-   window.onblur = () => log("lost focus");
+  window.onfocus = () => log("gained focus");
+  window.onblur = () => log("lost focus");
 }
