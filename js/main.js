@@ -12,11 +12,18 @@ window.onload = () => {
   }
 
   let count = 0;
+  let start = new Date().getTime();
 
   console.log("registerd workers");
+
   const log = msg => document.getElementById("log").innerHTML += `${msg}<br />`;
+
   const worker = new Worker("./worker.js");
-  worker.onmessage = msg => log(`Recieved message: ${msg.data}, count: ${count++}`);
+  worker.onmessage = msg => {
+    const elapsed = Math.floor((new Date().getTime() - start) / 1000);
+    log(`Main: #${count++} @ ${elapsed} secs`);
+    log(msg.data);
+  }
 
   document.getElementById("go").addEventListener("click", () => worker.postMessage("go"));
   document.getElementById("stop").addEventListener("click", () => worker.postMessage("stop"));

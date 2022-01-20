@@ -3,7 +3,8 @@ let count = 0;
 let timeout = -1;
 
 const tick = () => {
-  postMessage(count++);
+  const elapsed = Math.floor((new Date().getTime() - start) / 1000); 
+  postMessage(`Worker: #${count++} @ ${elapsed} secs`);
   timeout = setTimeout(tick, 1000);
 }
 
