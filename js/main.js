@@ -7,7 +7,7 @@ window.onload = () => {
   }
   console.log("main!");
   
-  if (!window.Worker) {
+  if (true) {
     return;
   }
 
